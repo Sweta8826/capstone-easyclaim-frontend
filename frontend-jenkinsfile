@@ -4,18 +4,34 @@ pipeline {
     agent any
     tools { nodejs "NodeJs10.0" }
     stages {
-        stage('Git Checkout') {
-            steps {
-            gitCheckout(
-                branch: "master",
-                url: "https://github.com/vigneshsweekaran/capstone-easyclaim-frontend.git",
-                credential: "git_credential")
-            }
-        }
         stage('Build') {
             steps {
-                sh 'npm install'
-                sh 'npm run ng -- build'
+                sh 'npm run ng build'
+            }
+        }
+        stage('Docker Build and Push') {
+            steps {
+                script {
+                    docker.build("vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}")
+                    docker.withRegistry('', 'docker_credential') {
+                        docker.image("vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}").push()
+                    }
+                }
+                sh "docker image prune -a -f"
+            }
+        }
+        stage('Docker Pull & Deploy') {
+            agent { label 'master'}
+            steps {
+                script {
+                    docker.withRegistry('', 'docker_credential') {
+                        docker.image("vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}").pull()
+                    }
+                }
+                sh "docker stop easyclaim-frontend || true"
+                sh "docker rm easyclaim-frontend || true"
+                sh "docker run -d --name easyclaim-frontend -p 9002:80 vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}"
+                sh "docker image prune -a -f"
             }
         }
     }
