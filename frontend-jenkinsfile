@@ -30,7 +30,7 @@ pipeline {
                 }
                 sh "docker stop easyclaim-frontend || true"
                 sh "docker rm easyclaim-frontend || true"
-                sh "docker run -d --name easyclaim-frontend -p 9002:80 vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}"
+                sh "docker run -d --name easyclaim-frontend -p 80:80 vigneshsweekaran/capstone:easyclaim-frontend-${env.BUILD_ID}"
                 sh "docker image prune -a -f"
             }
         }
