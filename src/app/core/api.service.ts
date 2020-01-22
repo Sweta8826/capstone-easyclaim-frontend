@@ -12,7 +12,7 @@ export class ApiService {
   baseUrlClaim: string = 'http://34.67.103.220:8080/claims/';
 
   login(loginPayload) : Observable<ApiResponse> {
-    return this.http.post<ApiResponse>('http://3.6.58.197:8080/' + 'token/generate-token', loginPayload);
+    return this.http.post<ApiResponse>('http://34.67.103.220:8080/' + 'token/generate-token', loginPayload);
   }
 
   getUsers() : Observable<ApiResponse> {
