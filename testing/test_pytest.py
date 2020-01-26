@@ -3,7 +3,7 @@ from selenium import webdriver
 
 def test_login():
     global driver
-    driver=webdriver.Chrome("C:/Users/VigneshSmile/capstone-easyclaim-frontend/testing/chromedriver.exe")
+    driver=webdriver.Chrome("testing/chromedriver.exe")
     driver.implicitly_wait(10)
     driver.get('http://35.223.71.21/')
     driver.maximize_window()
