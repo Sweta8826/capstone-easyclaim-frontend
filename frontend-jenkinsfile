@@ -34,7 +34,7 @@ pipeline {
         }
 		stage('Functional Testing') {
 		    steps{
-			    sh "pytest -v -s test_pytest.py"
+			    sh "pytest -v -s testing/test_pytest.py"
 			}
 		}
     }
