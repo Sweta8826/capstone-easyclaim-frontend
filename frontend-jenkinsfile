@@ -32,11 +32,11 @@ pipeline {
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-deployment.yml', credentialsId: env.CREDENTIALS_ID, namespace: env.NAMESPACE, verifyDeployments: true])
             }
         }
-		stage('Functional Testing') {
-		    steps{
-			    sh "pytest -v -s testing/test_pytest.py"
-			}
-		}
+		//stage('Functional Testing') {
+		//    steps{
+		//	    sh "pytest -v -s testing/test_pytest.py"
+		//	}
+		//}
     }
     
 }
