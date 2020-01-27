@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {Router} from "@angular/router";
 import {User} from "../model/user.model";
 import {ApiService} from "../core/api.service";
@@ -6,7 +6,8 @@ import {ApiService} from "../core/api.service";
 @Component({
   selector: 'app-list-claim',
   templateUrl: './list-claim.component.html',
-  styleUrls: ['./list-claim.component.css']
+  styleUrls: ['./list-claim.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ListClaimComponent implements OnInit {
 
