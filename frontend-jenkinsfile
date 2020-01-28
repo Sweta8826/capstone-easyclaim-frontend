@@ -1,9 +1,5 @@
 def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
 
-def getBuildUser() {
-    return currentBuild.rawBuild.getCause(Cause.UserIdCause).getUserId()
-}
-
 pipeline {
     agent any
     environment {
@@ -12,7 +8,6 @@ pipeline {
         LOCATION = 'us-central1-a'
         CREDENTIALS_ID = 'gke-capstone'
         NAMESPACE = 'capstone'
-		BUILD_USER = ''
     }
     tools { nodejs "NodeJs10.0" }
     stages {
@@ -47,12 +42,9 @@ pipeline {
     }
 	post {
         always {
-            script {
-                BUILD_USER = getBuildUser()
-            }
             slackSend channel: '#capstone-easyclaim',
                 color: COLOR_MAP[currentBuild.currentResult],
-                message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${BUILD_USER}\n More info at: ${env.BUILD_URL}"
+                message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
         }
     }
 }
