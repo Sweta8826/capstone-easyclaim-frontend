@@ -25,20 +25,23 @@ pipeline {
                         myapp.push("${env.BUILD_ID}")
                     }
                 }
-                sh "docker image prune -a -f"
             }
         }
+		stage('Functional Testing') {
+		    steps{
+			    sh "docker stop easyclaim-frontend | true"
+				sh "docker rm easyclaim-frontend | true"
+			    sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+			    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+				sh "docker image prune -a -f"
+			}
+		}
         stage('Deploy to GKE') {
             steps{
                 sh "sed -i 's/easyclaim-frontend:latest/easyclaim-frontend:${env.BUILD_ID}/g' k8s-deployment.yml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-deployment.yml', credentialsId: env.CREDENTIALS_ID, namespace: env.NAMESPACE, verifyDeployments: true])
             }
         }
-		stage('Functional Testing') {
-		    steps{
-			    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
-			}
-		}
     }
 	post {
         always {

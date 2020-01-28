@@ -14,7 +14,7 @@ def test_login():
     global driver
     driver=webdriver.Chrome("./testing/chromedriver", options=option)
     driver.implicitly_wait(10)
-    driver.get('http://35.223.71.21/')
+    driver.get('http://localhost:80')
     driver.maximize_window()
     driver.find_element_by_id("username").send_keys('vishnu')
     driver.find_element_by_id('pwd').send_keys('vishnu@123')
