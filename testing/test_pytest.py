@@ -1,9 +1,18 @@
 from selenium import webdriver
-#driver.implicitly_wait(10)   
+#driver.implicitly_wait(10)
+from selenium.webdriver.chrome.options import Options
+
+option=Options()
+option.add_argument("--headless")   
+option.add_argument('--no-sandbox')
+option.add_argument('start-maximized')
+option.add_argument('disable-infobars')
+option.add_argument('--disable-extensions')
+option.add_argument('--disable-dev-shm-usage')
 
 def test_login():
     global driver
-    driver=webdriver.Chrome("testing/chromedriver.exe")
+    driver=webdriver.Chrome("./testing/chromedriver", options=option)
     driver.implicitly_wait(10)
     driver.get('http://35.223.71.21/')
     driver.maximize_window()
