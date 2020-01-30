@@ -3,5 +3,6 @@ body {
   }
   .navbar-custom { 
     /*background-color: #ffff00;*/
-      background-color: red;
+    /*background-color: red;*/
+    background-color: green;
   }
