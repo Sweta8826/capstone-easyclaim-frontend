@@ -36,7 +36,7 @@ pipeline {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
                         docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push()
-                        docker.image("vigneshsweekaran/easyclaim-frontend:latest").push()
+                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push("latest")
                     }
                 }
 				sh "docker image prune -a -f"
