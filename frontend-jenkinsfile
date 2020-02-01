@@ -16,26 +16,32 @@ pipeline {
                 sh 'npm run ng -- build --aot --output-hashing=all'
             }
         }
-        stage('Docker Build and Push') {
+        stage('Docker Build') {
             steps {
                 script {
-                    myapp = docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
-                        myapp.push("latest")
-                        myapp.push("${env.BUILD_ID}")
-                    }
+                    docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
                 }
             }
         }
 		stage('Functional Testing') {
 		    steps{
-			    sh "docker stop easyclaim-frontend | true"
-				sh "docker rm easyclaim-frontend | true"
 			    sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
 			    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
-				sh "docker image prune -a -f"
+				sh "docker stop easyclaim-frontend"
+				sh "docker rm easyclaim-frontend"
 			}
 		}
+		stage('Pushing Docker Image to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
+                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push()
+                        docker.image("vigneshsweekaran/easyclaim-frontend:latest").push()
+                    }
+                }
+				sh "docker image prune -a -f"
+            }
+        }
         stage('Deploy to GKE') {
             steps{
                 sh "sed -i 's/easyclaim-frontend:latest/easyclaim-frontend:${env.BUILD_ID}/g' k8s-deployment.yml"
