@@ -7,7 +7,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
     "cibuild": "ng test --single-run --c && ng build --aot --output-hashing=all"
   },
   "private": true,
