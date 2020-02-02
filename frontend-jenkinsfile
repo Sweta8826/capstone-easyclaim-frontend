@@ -29,8 +29,6 @@ pipeline {
 		    steps{
 			    sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
 			    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
-				sh "docker stop easyclaim-frontend"
-				sh "docker rm easyclaim-frontend"
 			}
 		}
 		stage('Pushing Docker Image to DockerHub') {
@@ -41,7 +39,6 @@ pipeline {
                         docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push("latest")
                     }
                 }
-				sh "docker image prune -a -f"
             }
         }
         stage('Deploy to GKE') {
@@ -53,6 +50,9 @@ pipeline {
     }
 	post {
         always {
+		    sh "docker stop easyclaim-frontend | true"
+			sh "docker rm easyclaim-frontend | true"
+			sh "docker image prune -a -f | true"
             slackSend channel: '#capstone-easyclaim',
                 color: COLOR_MAP[currentBuild.currentResult],
                 message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
