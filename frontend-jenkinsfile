@@ -1,7 +1,7 @@
 def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
 
 pipeline {
-    agent any
+    agent { label 'master'}
     environment {
         PROJECT_ID = 'melodic-nature-248204'
         CLUSTER_NAME = 'capstone-cluster'
@@ -13,8 +13,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-			    sh 'npm run ng test'
+			    sh 'npm install'
                 sh 'npm run ng -- build --aot --output-hashing=all'
+				sh 'npm run ng test'
             }
         }
         stage('Docker Build') {
