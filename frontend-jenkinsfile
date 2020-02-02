@@ -15,7 +15,7 @@ pipeline {
             steps {
 			    sh 'npm install'
                 sh 'npm run ng -- build --aot --output-hashing=all'
-				sh 'npm run ng test'
+				sh 'npm run ng test --code-coverage'
             }
         }
         stage('Docker Build') {
