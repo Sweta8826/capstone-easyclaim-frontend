@@ -17,7 +17,7 @@ pipeline {
                 sh 'npm run cibuild'
             }
         }
-	stage('SonarQube analysis') {
+	    stage('SonarQube analysis') {
             environment {
                 scannerHome = tool 'sonarscanner'
             }
@@ -35,12 +35,12 @@ pipeline {
             }
         }
         stage('Functional Testing') {
-	    steps{
-	        sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
-		sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+	        steps{
+	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+		        sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+	        }
 	    }
-	}
-	stage('Pushing Docker Image to DockerHub') {
+	    stage('Pushing Docker Image to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
@@ -50,6 +50,21 @@ pipeline {
                 }
             }
         }
+		stage('Artifactory') {
+		    steps {
+			    rtUpload (
+                    serverId: 'artifactory',
+                    spec: '''{
+                        "files": [
+                            {
+                                "pattern": "functional_result.html",
+                                "target": "easyclaim-frontend/testing/"
+                            }
+                        ]
+                    }'''
+                )
+			}
+		}
         stage('Deploy to GKE') {
             steps{
                 sh "sed -i 's/easyclaim-frontend:latest/easyclaim-frontend:${env.BUILD_ID}/g' k8s-deployment.yml"
