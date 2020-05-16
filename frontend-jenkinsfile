@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                 {
+                script {
                     docker.build("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}")
                 }
             }
@@ -58,7 +58,7 @@ pipeline {
                 )
 			}
 		}
-        stage('Deploy to GKE') {
+        stage('Deploy to Kubernetes') {
             steps{
                 kubernetesDeploy(
                     kubeconfigId: 'kubernetes-config',
