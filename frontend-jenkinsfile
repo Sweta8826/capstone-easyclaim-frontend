@@ -2,13 +2,6 @@ def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', '
 
 pipeline {
     agent { label 'master'}
-    environment {
-        PROJECT_ID = 'upheld-chimera-264011'
-        CLUSTER_NAME = 'capstone-cluster'
-        LOCATION = 'us-central1-a'
-        CREDENTIALS_ID = 'gke-capstone'
-        NAMESPACE = 'capstone'
-    }
     tools { nodejs "NodeJs10.0" }
     stages {
         stage('Build') {
@@ -29,14 +22,14 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                script {
-                    docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
+                 {
+                    docker.build("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}")
                 }
             }
         }
         stage('Functional Testing') {
 	        steps{
-	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}"
 		        sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
 	        }
 	    }
@@ -44,8 +37,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
-                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push()
-                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push("latest")
+                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push()
+                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push("latest")
                     }
                 }
             }
@@ -67,8 +60,11 @@ pipeline {
 		}
         stage('Deploy to GKE') {
             steps{
-                sh "sed -i 's/easyclaim-frontend:latest/easyclaim-frontend:${env.BUILD_ID}/g' k8s-deployment.yml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-deployment.yml', credentialsId: env.CREDENTIALS_ID, namespace: env.NAMESPACE, verifyDeployments: true])
+                kubernetesDeploy(
+                    kubeconfigId: 'kubernetes-config',
+                    configs: 'k8s-deployment.yml',
+                    enableConfigSubstitution: true
+                )
             }
         }
     }
