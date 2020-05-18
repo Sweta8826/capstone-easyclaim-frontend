@@ -65,10 +65,9 @@ pipeline {
                 )
 			}
 		}
-        stage('Deploy to GKE') {
+        stage('Deploy to Kubernetes') {
             steps{
-                sh "sed -i 's/easyclaim-frontend:latest/easyclaim-frontend:${env.BUILD_ID}/g' k8s-deployment.yml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-deployment.yml', credentialsId: env.CREDENTIALS_ID, namespace: env.NAMESPACE, verifyDeployments: true])
+                sh "ansible-playbook deploy-playbook.yml"
             }
         }
     }
