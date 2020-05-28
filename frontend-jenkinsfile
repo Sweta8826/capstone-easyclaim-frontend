@@ -2,13 +2,6 @@ def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', '
 
 pipeline {
     agent { label 'master'}
-    environment {
-        PROJECT_ID = 'upheld-chimera-264011'
-        CLUSTER_NAME = 'capstone-cluster'
-        LOCATION = 'us-central1-a'
-        CREDENTIALS_ID = 'gke-capstone'
-        NAMESPACE = 'capstone'
-    }
     tools { nodejs "NodeJs10.0" }
     stages {
         stage('Build') {
