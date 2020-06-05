@@ -60,11 +60,7 @@ pipeline {
 		}
         stage('Deploy to Kubernetes') {
             steps{
-                kubernetesDeploy(
-                    kubeconfigId: 'kubernetes-config',
-                    configs: 'k8s-deployment.yml',
-                    enableConfigSubstitution: true
-                )
+                sh "ansible-playbook deploy-playbook.yml"
             }
         }
     }
