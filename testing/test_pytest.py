@@ -12,7 +12,7 @@ option.add_argument('--disable-dev-shm-usage')
 
 def test_login():
     global driver
-    driver=webdriver.Chrome("./testing/chromedriver", options=option)
+    driver=webdriver.Chrome("./testing/83/chromedriver", options=option)
     driver.implicitly_wait(10)
     driver.get('http://localhost:80')
     driver.maximize_window()
