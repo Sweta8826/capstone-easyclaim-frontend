@@ -28,12 +28,12 @@ pipeline {
             }
         }
         stage('Functional Testing') {
-	        steps{
+	    steps{
 	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}"
-		        sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+		    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
 	        }
 	    }
-	    stage('Pushing Docker Image to DockerHub') {
+	stage('Pushing Docker Image to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
@@ -43,9 +43,9 @@ pipeline {
                 }
             }
         }
-		stage('Artifactory') {
-		    steps {
-			    rtUpload (
+	stage('Artifactory') {
+	    steps {
+                rtUpload (
                     serverId: 'artifactory',
                     spec: '''{
                         "files": [
@@ -54,10 +54,12 @@ pipeline {
                                 "target": "easyclaim-frontend/testing/"
                             }
                         ]
-                    }'''
+                    }''',
+                    buildName: ${env.JOB_NAME},
+                    buildNumber: ${env.BUILD_NUMBER} 
                 )
-			}
-		}
+	    }
+	}
         stage('Deploy to Kubernetes') {
             steps{
                 sh "ansible-playbook deploy-playbook.yml"
