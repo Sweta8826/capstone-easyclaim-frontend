@@ -23,13 +23,13 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
+                    docker.build("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}")
                 }
             }
         }
         stage('Functional Testing') {
 	        steps{
-	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}"
 		        sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
 	        }
 	    }
@@ -37,8 +37,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
-                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push()
-                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push("latest")
+                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push()
+                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push("latest")
                     }
                 }
             }

@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: easyclaim-frontend
-  namespace: capstone
+  name: easyclaim-frontend-dev
+  namespace: development
   labels:
-    name: easyclaim-frontend
+    name: easyclaim-frontend-dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: easyclaim-frontend-pod
+      name: easyclaim-frontend-pod-dev
   strategy:
     type: Recreate
   template:
     metadata:
-      name: easyclaim-frontend-pod
+      name: easyclaim-frontend-pod-dev
       labels:
-        name: easyclaim-frontend-pod
+        name: easyclaim-frontend-pod-dev
     spec:
       containers:
-        - name:  easyclaim-frontend
-          image: vigneshsweekaran/easyclaim-frontend:latest
+        - name:  easyclaim-frontend-dev
+          image: vigneshsweekaran/easyclaim-frontend-dev:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -29,10 +29,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: easyclaim-frontend-service
-  namespace: capstone
+  name: easyclaim-frontend-service-dev
+  namespace: development
   labels:
-    name: easyclaim-frontend-service
+    name: easyclaim-frontend-service-dev
 spec:
   ports:
     - port: 8080

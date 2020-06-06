@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "cibuild": "ng test --c && ng build --aot --output-hashing=all"
+    "cibuild": "ng test --c --watch=false --code-coverage && ng build --aot --output-hashing=all"
   },
   "private": true,
   "dependencies": {
