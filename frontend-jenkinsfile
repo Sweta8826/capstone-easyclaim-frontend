@@ -51,7 +51,7 @@ pipeline {
                         "files": [
                             {
                                 "pattern": "functional_result.html",
-                                "target": "easyclaim-frontend/testing/"
+                                "target": "easyclaim-frontend/testing${env.BUILD_NUMBER}/"
                             }
                         ]
                     }''',
