@@ -30,7 +30,7 @@ pipeline {
         stage('Functional Testing') {
 	    steps{
 	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}"
-		    sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+		    sh "pytest -v -s --html=functional_result_${env.BUILD_ID}.html testing/test_pytest.py"
 	        }
 	    }
 	stage('Pushing Docker Image to DockerHub') {
@@ -50,8 +50,8 @@ pipeline {
                     spec: '''{
                         "files": [
                             {
-                                "pattern": "functional_result.html",
-                                "target": "easyclaim-frontend/testing${env.BUILD_NUMBER}/"
+                                "pattern": "functional_result*",
+                                "target": "easyclaim-frontend/testing/"
                             }
                         ]
                     }''',
