@@ -23,41 +23,43 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}")
+                    docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
                 }
             }
         }
         stage('Functional Testing') {
-	        steps{
-	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}"
-		        sh "pytest -v -s --html=functional_result.html testing/test_pytest.py"
+	    steps{
+	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+		    sh "pytest -v -s --html=functional_result_${env.BUILD_ID}.html testing/test_pytest.py"
 	        }
 	    }
-	    stage('Pushing Docker Image to DockerHub') {
+	stage('Pushing Docker Image to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_credential') {
-                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push()
-                        docker.image("vigneshsweekaran/easyclaim-frontend-dev:${env.BUILD_ID}").push("latest")
+                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push()
+                        docker.image("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}").push("latest")
                     }
                 }
             }
         }
-		stage('Artifactory') {
-		    steps {
-			    rtUpload (
+	stage('Artifactory') {
+	    steps {
+                rtUpload (
                     serverId: 'artifactory',
                     spec: '''{
                         "files": [
                             {
-                                "pattern": "functional_result.html",
+                                "pattern": "functional_result*",
                                 "target": "easyclaim-frontend/testing/"
                             }
                         ]
-                    }'''
+                    }''',
+                    buildName: "${env.JOB_NAME}",
+                    buildNumber: "${env.BUILD_NUMBER}" 
                 )
-			}
-		}
+	    }
+	}
         stage('Deploy to Kubernetes') {
             steps{
                 sh "ansible-playbook deploy-playbook.yml"
