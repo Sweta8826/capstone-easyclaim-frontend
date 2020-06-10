@@ -43,15 +43,16 @@ pipeline {
                 }
             }
         }
-	stage('Artifactory') {
+	stage('Pushing artifacts to Artifactory') {
 	    steps {
+	        sh "zip -r buildArtifact${env.BUILD_ID}.zip dist"
                 rtUpload (
                     serverId: 'artifactory',
                     spec: '''{
                         "files": [
                             {
-                                "pattern": "functional_result*",
-                                "target": "easyclaim-frontend/testing/"
+                                "pattern": "buildArtifact*.zip",
+                                "target": "easyclaim-frontend/"
                             }
                         ]
                     }''',
