@@ -72,7 +72,6 @@ pipeline {
 	    cleanWs()
             sh "docker stop easyclaim-frontend | true"
 	    sh "docker rm easyclaim-frontend | true"
-            sh "docker image prune -a -f | true"
             slackSend channel: '#capstone-easyclaim',
                 color: COLOR_MAP[currentBuild.currentResult],
                 message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
