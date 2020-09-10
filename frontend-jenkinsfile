@@ -2,7 +2,7 @@ def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', '
 
 pipeline {
     agent { label 'master'}
-    tools { nodejs "NodeJs10.0" }
+    tools { nodejs "nodejs" }
     stages {
         stage('Build') {
             steps {
@@ -23,13 +23,13 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build("vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}")
+                    docker.build("Sweta8826/easyclaim-frontend:${env.BUILD_ID}")
                 }
             }
         }
         stage('Functional Testing') {
 	    steps{
-	            sh "docker run --name easyclaim-frontend -d -p 80:80 vigneshsweekaran/easyclaim-frontend:${env.BUILD_ID}"
+	            sh "docker run --name easyclaim-frontend -d -p 80:80 Sweta8826/easyclaim-frontend:${env.BUILD_ID}"
 		    sh "pytest -v -s --html=functional_result_${env.BUILD_ID}.html testing/test_pytest.py"
 	        }
 	    }
